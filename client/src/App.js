@@ -1,78 +1,95 @@
-import './App.scss';
-import Navbar from './components/pages/Navbar'
-import Login from './components/pages/Login'
-import {Jumbotron, Button, Card, CardDeck} from 'react-bootstrap'
-import ErrorPage from './components/pages/ErrorPage'
-import './components/styles/comp.css'
-import {BrowserRouter as Router, Switch, Route} from 
+import {BrowserRouter as Router, Switch, Route, NavLink} from 
 'react-router-dom';
+import React, {useState} from 'react'
+import './App.scss';
+import './components/styles/comp.css'
+import PNavbar from './components/pages/Navbar'
+import Register from './components/pages/Register'
+import {Button} from 'react-bootstrap'
+import Login from './components/pages/Login'
+import Cards from './components/pages/Cards';
+import Jumbo from './components/pages/Jumbotron';
+import ErrorPage from './components/pages/ErrorPage'
+import UserNavbar from './components/userPages/UserNavbar';
 
-function App() {
-  return (
-    <Router>
-      < Navbar />
-      <Switch>
 
-        <Route path ='/home'>
-        <Jumbotron classname="banner">
-        <h1>Prove it!</h1>
-        <p>
-         Hello, we are here to make things a little easier for you!, with proveit-19 you can now keep track of all your vaccinated
-         employees
-        </p>
-        <p>
-          <Button variant="primary" path="/register">Register</Button>
-        </p>
-      </Jumbotron>  
-      <CardDeck>
-  <Card>
-    <Card.Img variant="top" src="data:image/png;base64,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" />
-    <Card.Body>
-      <Card.Title>Johnson & Johnson</Card.Title>
-      <Card.Text>
-      On February 27, 2021, the FDA granted emergency use approval for a different type of vaccine, called a carrier, or virus vector, vaccine. In early April, the CDC and FDA issued a joint recommendation for states to halt use of the Johnson & Johnson vaccine “out of an abundance of caution” during an investigation into reports of six rare, but serious clotting problems among women ages 18 to 48, occurring six to 13 days after vaccination (the recommendation fell short of an order to stop using the vaccine, leaving final decisions to the individual states).
+  
+  
+  
 
-But on Friday, April 23, the Food and Drug Administration (FDA) ended its recommended pause on the vaccine and will add a warning label about an uncommon, but potentially serious, blood clotting disorder. This decision followed a vote by a panel of advisers to the Centers for Disease Control and Prevention (CDC) to end the pause. This clears the way for states to resume vaccinations with the Johnson & Johnson vaccine.
+export default function App() {
+const adminUser = {
+  email: "proveit19", password: "provepass19"}
+  const [user, setUser] = useState({name: "", email: "", password:""})
+  const [error, setError] = useState("")
+  
+  
+  const userLogout = () => {
+    return (
+      setUser({name: "", email: ""})
+     
+      
+      );
+    };
+    const userLogin = (details) => {
+      if (details.name === true && details.email === adminUser.email
+        && details.password === adminUser.password) 
+        return 
+        console.log('you have succesfully logged in')
+        setUser({
+          name: details.name,
+          email: details.email
+        })
 
-In comparison to the Pfizer and Moderna vaccines, this one is easier to store (in refrigerator temperature), and requires only a single shot, which has made it easier to distribute and administer. An analysis released by the FDA in late February showed that the vaccine may reduce the spread of the virus by vaccinated people.
-      </Card.Text>
-    </Card.Body>
-    <Card.Footer>
-      <small className="text-muted">Last updated 3 mins ago</small>
-    </Card.Footer>
-  </Card>
-  <Card>
-  <Card.Img variant="top" src="https://mms.businesswire.com/media/20160726005747/en/500745/5/Moderna_Logo_FINAL_030915_CMYK.jpg" />
-    <Card.Body>
-      <Card.Title>Moderna</Card.Title>
-      <Card.Text>
-      Moderna’s vaccine was the second one authorized for emergency use in the U.S.—it received FDA EUA on December 18, 2020, about a week after the Pfizer vaccine. Moderna is also an mRNA vaccine, using the same technology as the Pfizer-BioNTech one and with a similarly high efficacy at preventing symptomatic disease. There are two key differences: The Moderna vaccine can be shipped and kept in long-term storage in standard freezer temperatures, and stored for up to 30 days using normal refrigeration, making it easier to distribute and store. Also, the Moderna vaccine was slightly less effective in clinical trials—about 86%—in people who are 65 and older.      </Card.Text>
-    </Card.Body>
-    <Card.Footer>
-      <small className="text-muted">Last updated 3 mins ago</small>
-    </Card.Footer>
-  </Card>
-  <Card>
-    <Card.Img variant="top" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASQAAACtCAMAAAAu7/J6AAAAdVBMVEUAfML///8AecEAdb8AcL0Ac74Ad8AAcr4Ab71bnNDO4O/3+/2vyuWryeT7/f4Abr1vptTK3e53q9aixOLX5fJGksvu9fqKtdvw9vq40ejB1+vh7PWav9+CsdljoNGRut0fg8U2i8hRl80ph8c9jsq71OkAZrrybgqnAAATmUlEQVR4nN1d6bqquhLEkACOW1CcBxzWef9HvKAMSbqAIIh668f5zrdxhVAkne7qTrAGn8V4v/S308M6mA+v4S2KrARRdLuH19P8eF5M/0b71ezDnbQ+c9vxcjddz0PL9VwhbNthDmPMksESOLYtXJdz+3YNzhN//yG2+iZpvNye5xebu8J2HJWWSjBm267rWWGw2O177nOPJM2Wk+PV4m4ybszJAWQJl0en81+PVPVC0sY/nCJPtGJH4yqh6hJMl71MwHeTNBstTsnwcbqiR2Yqporfgsnbx9Q7SdrsjncunHfwozDliuvBf+eQehdJq78gignqbH7VMGW7/L5+G1HvIGm2O8YWqCd+CqIcl4fn5Ruep3uS9ofQE++dYRVExW7CabLq+pm6Jck/WtzuewgRovit4wHVHUmzv5PrfmoIqYgHlHX0O3uyrkiabYf8Y5MMwhF20BVPnZC0O/He7bQBmHCOncy79iSNAuF+IUNPOK51bu9rtiRpdYj41zL0hM3DySdJ2g09+9McGIAJN2g1nF4naXywujBETBeS3gLGL9v+SdrP2w4iJ/aQPet2D8OLxeMQ+M1UMWGfN72StAvbWaLY4bPmi1HhGq/8w9B99wpp8/lrs+4VkrZRu+XM4bcD6u1uyN/sajHvOuqFpGlLU8S8k+y8rPzt1s8oWx29d886fm/uYjYlacpEu056cyn+3Jwt7grhcnueEre6t2vfoAf80pSmZiRNrJaPYN/kUXTgufFn3jBVg9a8LQ11iEdTs0nXhKRd5LbsnneWmhtfFMYdK118pm9nKabp2sSEm5O0vLeliNnyC1xZWqLNjdIr53fPuORuXjDunKTNqbVJZZHsp4wVjphrBdNddj3sI9Jx3EPHJB3aR2jORWnxJjfohoqR2L9/wiWwLUMLbkTSMmo/AZjKUSD761yPQIc9Bc38ZOSEm5AUdOC8sEhp0vfkrpIX+teDVXp2S0w7IclnXbjBTH1l8iWb2oZNP/MtgQjr8wa1JAVe/Y3q4akK4UEJjsFde9SomFc7mGpIWlqdCEbuQml1LDsTYCANBpc+lTz3WpPVrCbp8K+TXrCr2uxaZl4gGfreq9zJnGoPvIqk2bUj+2mrfttM8Uo5WmCibm5sDCUUaELSvivJ0NVEQdUicTTW+zPcKURYMeXKSdp2YrFjsFC/pwIPhAfLthHQC720yqO5UpKOnb1MT7v7Tp3ELrBJ5w/kORnfNSVp2Nm7dAK9aXUW2wt6989kqf6BnlSQNLt0lyri2nQa60M0IrdffChRxY8NSBpH3b1Ke601PtUZIJHBqnezncE9GZO0sToc7q5ul6kO4qpGa9bhK2oKe2hIkq6GtYKjj+ANWDQdmaXVBzmKu6L5vSUkdTqOLE8PHyfI3vAiNJl+uPrCBiwRkhTFkBsg2fdQ+lwOmeRYKrLZ2l9tVv66ZTKmA9jULhGSZMVQbMa1WO1Hf4d5VFIFyIkTVGaUHTch/BvqwITusxCSQqmbDFoxjM0WpV/ZTf+d378v3RiuHshpJM1li2GbqHYST2diTmgL628YK3XwtGBTJWmhTAY9nqjF+KRNJt2R1PT/r4X25ApJS1U+oq5wLSYKS85cv44cgG8EUzQBmaSxOhXY0N89AAbUMv5nH20RGsksic8p/C2hKhcySVfNXjDxwD8QHVvxv7suD2ni6k9iySFXj79gkhIomUuJpEXJW3YpR1n2kHlkuRwEOQ/E2/4Vk5RANksFSWVhJXIEijCd5BUHg/yaS5RjogB8L+REYUFSmfaOHAE5SCUXc3WWkUu7HzFJCST5In/GaVn/OU3eyQOCE7M+TlcwRqfiT3hJGf7lT5aRNCvVuYAjIK9R4o9cvj7HGV3b+ikX6QrsrpMUlL1jRxfNYsylZwWzcfFsCxj8H4hJJORZnpSkVamTJ0DeTibUppZ79BhoVAD4RBKkHVSSTqXzQFCOlGe1aaX9s9wBXCDK7ZdDLGSS9qUDiQHV96xkqYGr+SAR5NPmv2S3EzgySfPSgQRmk+oRolR+cr0wewXe/1QdI013PUiqCDuBA6DaL/CDBxmgWORzWZDXUZB0LrUVVDXTVWqP/uBBEtUkfya6lfB0cB4klZsKB1RbqCo10lOS9qi73Ud0yxzmJOcMddZemJG0K1+ZUaJe+TVY6B+/AO72m6Pb5JQJFp6C4/E4T07X6YapR5xrkaGhwKaPqqrUqE4tiVrAorf5xyqRPawZdIa88DCS1tPZcnEFyYm6e9vCY5Elbbt+TCWrMjSn0qI+aVxQCr2PafSoIOdfhxU4ZQF21Y+kn9/kR/cuU1DAM57qpdVOWXP3RzP8dnjMnJk/LDh5krQtt6cC7MlUfwHISMYaqUmqx/FBEoqCEGbFIGF8WLqx/U+p+URuyROJM61U3C+zPHKyAFmVLh5wCNVqfXjb2LFG9TQ1eHaKalAYRajshpX5ikDqb3mv4teqReqztLbVPj9IKo8VEAVqWQwsnQ0YEFDqsHw+DFV8IXJhh4HoR4VUseeV1f/7wrno18ZPkpKdDFZV1IkoUNUOSEZkwdrsajylOrQoAuRuqQi1sT4Kwuta9W/z3QflNmDNQQXA9kkM38QkVVRMAQdAs/LIS4rjW6Bu1+Fpt4EGhZCVeXPdgg15vFTZntpKlucqH3QWqiVJrW88Da0KAQA5hKrXDGfb1kZr3mYxLUBtQypnsrmKIZwgh7QT//TAMivQ0+ZVGpqy2Ilanw8H0uYeD/znOh4vJVZF1InGvhoKw0keu10gVpn+s3MIauuyJVZ1Xzgsr840C5LrOmWTwlb/bpY37jjx7UmDi3h+bqi3s31agHBgVXhJQJlVrTx0t+NoGSVYZI8VrDJQh9C2f2VIV2dP756fP4reATk4Ba8+NqwbRi2E/+TWHVjLci+JZvI1Kw+LBeIOoQSL/C6AuYduCKkAeyDddOESpqOCCM3GyLuekAAW/62gLy41LXxvbcsVALAYKAXWuDTHhvKJmkwil+ESC/qd/PQ52WgwIDnF5OK1GKhwB8LVAaM7XdKEbx1KSUKulxKj/isZSGjNC6Q/BGsfEmtKVuz0Ir2HtLOJiBfFEq4PsgemsTNJO5VaCHtqHUsXNzApFL2NFB9nv0ChhbLjlq59aOuWgCtbui/VI96JHAqQcGqUjzJkCjaPcaz/a2atnbNV4QHQ1mS9DbzLwdPXBAkWJZjhtJdg9eDQq0k9Q5u+dznxSYxZcQPk/j44IK8ui+SdwCrNFyIHQF6ikG47WCdvDCRY5EkNTBkwjNjgZXEtkHCiyvebkwRe7dPK6S99yfOeWJcSjsrTIE/8Q77xI05CCRa50AAM+BNd3By4tSr9ITCX8lgF7zd7C8gUpFZdLbvd5D1moaW8ABlIESpIghztHq8EZeKUzdt0CFI3xIML9S4zE/SSHF2B95tdBaYgHzJCYmkpyXqydKUCrQK53mbDzWGTJxXADZenE8gtjIgDgNS+2JSmzdjAEb/KloA6eBkRIPdeWGUnStldKduzo1KSkAOQPqXtwfg13SGH3GR5OoHcAtjehm6QE4GcTIln4DvMsqozagqUFVtYwWFxvJiepwFWgf1/nLuc32mEmFy8VLxmeToBaYFkCOgCn2CSEoEG+UgKDUHEt0//FJgC7Q0xdDx/VMYS6uZ4tcdHDcyKI7QACSOZJLowkWoNsMAPMm/GalxfniCzpmBXtEmeq8QqNVKExmdRGB2wOssuDLA2+p4c7IEVch90PqqRmnVgCgyK76IyPwllQUowmnPZLgOTG0kNg9yC7s/iInup7tW4azlSHR+YggpnOsPNKkm6gVUAYbwLmLpZAugrirsNcgvauxTwXKOiEfQa6pA9FTEFs/r6hNhPwiVuBntvVqNpcKOnJwMSZBcGrDwjlaQSEakw7i9kYjKrR6XWinxa3qGThXeXI9s4eWC6OJyP82vkcmGD0xVQ6C67MEDw1apNscWRjjADruJ4OqlEqkEAT9zgpKY4dsN6Eqq4SRdZx3YqPvADSJgp7ja1N5HSgAuXrr2068WlTUw8uxJpd6kpmBnsdXHOFvV2E4D1ZWFUEwJIqNHb1KoluAc2V2yft6Av8Grm/FG9zaQayJ5Y8DwnFAYalhfTP5T1NjDg1UJKLCIdlcPNyKMaWN/HzakpKC/xK+COLOhMgTDQ7HAspK8oxYPUnihWAYtIS7W2jlxXxgMjky2POKnFN6l05SsLmi6gCJlVzgISFPka5Jpk8mH6Ra/RoCQpY/U0mepIu05NgVHNtBhYAyByI0XIbNoDlV3R26jFUcqdsIgUqD2kMb58FURFORXkSnkdpNJnC+gUqOTWbH8RCj1l+Rp4FnK5kwfdfF9bgcjqpph+kHVODQ+ItExORXPOSVUJJQmsH/DMAwIw6zc1CbdI+mtYLTHTjSaJmGSTBJjIekAjrbHJZtfYglggekElt2bHYwISFD+MehZKyII4otIueROyPwyKfrOxSiMto51l8ey2wCABspjhIgvcK/kVAM9CWg+wiPRH7kwspkQjEBCyyQgiLZNy4KRGC9VMAttnEOJYWF+RJzPwLIr1AKbxBmNwY31ISFkGYPQy/w4Y2sjgmZIQwhrQhQsoQgaCggX1FV9+SOBZFLE9mOMDunn60YwWXUjPCipGsg5QQ2u0QyGxIAlJ2jBBIrzZbKMejDKigRdUOABYRJoiR0b3nAuSqMqS+6HgJRhNj2T+Poyl+mMgi5ntnUX6SiRdBwJzziE+HLvkXXvqtM1nArVIq7zjwNAGBtPDPmckqQYM6MBme7CAQVD1NtpwdqmkePjGk+8tP7UHKb7QRkU+o8hoXBVyBTC0Js+U7whQlXjUX7OdM8C9kqUDoKblHGIRabXd/W23SZixWCwOh/Mhe2TNyFuPuzDii+6lLQEg/2BgQ4q9JVoZGh34FZtP5AaB6Q2rG844xCISwT7vB1ds9/jkucIj9dxbOfNdVu1XDWmXUpHpteC4NJm80AtSNC3QcGpNSkQkAknD1NLgs+WSzOW5cmwKtYcmMom0303xAkCe3WzrLCjmVzQM2nDmogrDDz/Idys9OTPFzlLsKJDeTcy2tHNSVmyAIjQyM0nAvZpX623poomrGCmWihER14rz/ZehanCA3mbytYb0kbJ4KfcWnfNIw9JsbUPulfyyUMPs+QBL/QrEUpv1jK9LRiD9aJgTkHsYxCSZFc1IKky9I3SYbXgEXpCqadGG0ydhLrkCQeaHw+fUx1+uGfgi1ktPlckueeRtoj9VAnhBrdusRczv8LDbP0fUeL87DEV3JwyKiU5S2/3oKKfYy0n/zBYud2NvM/5vxYmXLzScuzQFSaN2x639n2xxl1BIN5LQ1e78B+AFmamZ3wpJJ5XVwFZtAveqr4/9vAkSMdJDLVt8gAMl3H7tjBsFstKg6Mrn1x8LVNz8wgmupVCK7VTx3TCnDgAKXn/muEQANVhXSZq9ehY3qrjpttv9wlWkGy2N8+rn52pK9H8NWim/nuvyXzPeIOH2qU9GdABdSyYJwRe/HUpn20+dBKjA1kN1+nTrFxYlkHD7ocNJNVAJEBVdNWfJpYrQD54o9QQIQlH+fd74+UDCzUgc/UI4QKmHRQpNWUIVNz9qtp0IlEjhSo6GLIGE28+du/kEu6EyspItCMdGzwgcgE98fKw9tA8a15A0ODdRl0DFze+cTi4Bff2miqTB1NyrBAm3n9Tb3LJNK+U7fnzjz3GD83x+7ZTbBF7pB82rPsxpGu2CHU2/p7dVfE2x+hOvoVnFDSho/rnZ5lR8l7PmY8FHE/MN6ux+zt12K7eu1exC3Bl8bQ2UzfyYu8286sKCuq2aq1udCUYVN781kOyo5izD+v2s6xpfANTZ+T9FEvhATWOSBiOr0nt+uZ7pO+Cw+i3ZRjuj51X2G1Tc/A5H6DtHL5I08K1SywQqbvBmzG+EiEpPzW1OUuIMlAwPUGf3K7kkxkt97NdIGuxv2BqDOruen/VFMO9UUSr3GklJPAZGCChoXv6Eu+1ejGZaU5LkU1tygIqb95dutYeIwEGjnZAUz7mhLg2A/WXfLyXZrNm5OU0PR1neVZrobs6vl5Js1vQcj+YnyPg3KZ6r3ef/dRCNKXqFpDjqLWgCJdivV6a8H0xE4LNHbyEppik79Qxscf/e2ebwu2FZfSckxV71NVnpQMXN15Zu2d7JfNHvhqR4pQu4DSpuvvOzkkxY8Li+d5M0GIwP4JSeXmq3G8L2rq/NsxRtSEL4vmIS5lqH5iflKeiapC8zSUyIwPBzMRXomqRvSm8z4Z1aTbMMXZP0NV6SI/hwCw/RaY6uSfoOd9sRYv7XEUODzkna//fx6cZsHh3NjxI1QdcjaXSMwLfneiMomWSLxh+7qkPXJMXYL65cdPfZxwYEefdzt0MoxRtISjA6X7r66qMRQbbLL2vfcFN4Y7yJpBiz3frOO93KiPlxbG5fD353ZprifSQ9MFqc2NuYivlxvftx27kN0vFmkhKsduchSyZfd1SxZH6JsAd+HuiBpAc2/iK4i2RDcSuqkm+PCc++Bwu/ZTzWBH2R9MRqNF2fbq7nCrvRwGIsnlrC5fZlfp6MeqTniX5JSrFZ7hbreRgJzl03OSAp+VK09NHex//G/5Z8L891Obdv1+A8zbb/94+PkJRjttovd9vp4rwO5qfhNQzDe4Lwej3Ng+P6MN3ulvvXxbKu8D8WERAUwA4SpgAAAABJRU5ErkJggg==" />
-    <Card.Body>
-      <Card.Title>Pfizer-BioNTech </Card.Title>
-      <Card.Text>
-      On December 11, 2020, this became the first COVID-19 vaccine to receive an FDA EUA, after the company reported positive clinical trial data, which included news that the vaccine was up to 95% effective at preventing symptomatic disease. But the Pfizer-BioNTech vaccine has had strict requirements involving how the vaccine is stored. For instance, it has required shipping in ultra-cold temperature-controlled units (-94 degrees Fahrenheit). In mid-February, the company submitted new data to the FDA demonstrating the stability of the vaccine at temperatures more commonly found in pharmaceutical refrigerators and freezers. Approval would make the vaccine easier to distribute.
-      </Card.Text>
-    </Card.Body>
-    <Card.Footer>
-      <small className="text-muted">Last updated 3 mins ago</small>
-    </Card.Footer>
-  </Card>
-</CardDeck>
-</Route>
-        <Route path ='/Login' component={Login} exact />
-        <Route path ='*'>
-         < ErrorPage />
-         </Route>
-      </Switch>
-    </Router>
-  );
-}
+      }
+      const newUser = (details) => {
+        if (details.name === true && details.email === adminUser.email
+          && details.password === adminUser.password) 
+          return 
+          console.log('you have succesfully logged in')
+          setUser({
+            name: details.name,
+            email: details.email
+          })
+  
+        }
 
-export default App;
+    return (
+      <Router>
+    
+       
+    
+    
+
+        <Switch>
+          <Route path='/home'>
+            <Jumbo />
+            <Cards />
+          </Route>
+          {/* {(user.email !== "") ? (
+            <div className="welcome">
+              <h2> Welcome, <span> {user.name}</span></h2>
+              <Button>Logout</Button>
+            </div>
+          ) : (
+            
+            <Route href='/register' render={(props) => <Register {...props} newUser={newUser} error={error} exact />}  />
+          )} */}
+         
+          {(user.email !== "" ) ? (
+            <div className="welcome">
+              <UserNavbar />
+              <h2> Welcome, <span> {user.name}</span></h2>
+              <Button onClick={userLogout}>Logout</Button>
+            </div>
+          ) : (
+            
+            <Route href='/user1' render={(props) => <Login {...props} userLogin={userLogin} error={error} exact />} />
+          )}
+          <Route path='*' exact>
+            <ErrorPage />
+          </Route>
+        </Switch>
+      </Router>
+    );
+  }
