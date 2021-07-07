@@ -5,8 +5,8 @@ import PNavbar from './Navbar'
 
 function Jumbo() {
     return (
-      <>
-      <PNavbar />
+      
+    
 <Jumbotron className="jumbo" > 
 <i class="fas fa-barcode"/> 
 <h1>Prove it!</h1>
@@ -16,11 +16,13 @@ function Jumbo() {
 </p>
 <p>
   <Nav.Link href="/register">
-  <Button variant="warning" >Register</Button>
+  <Button variant="warning" >Login</Button>
   </Nav.Link>
 </p>
 </Jumbotron> 
-</> 
+
+
+
 )
 }
 export default Jumbo

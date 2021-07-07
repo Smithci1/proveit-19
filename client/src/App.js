@@ -57,12 +57,10 @@ const adminUser = {
     return (
       <Router>
     
-       
-    
-    
 
         <Switch>
           <Route path='/home'>
+           
             <Jumbo />
             <Cards />
           </Route>
